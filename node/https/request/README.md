@@ -1,4 +1,4 @@
-NodeJS HTTPS QuotaGuard Shield Example
+NodeJS HTTPS Request QuotaGuard Shield Example
 --
 
 # Prerequesites
