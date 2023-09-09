@@ -1,0 +1,4 @@
+[qgtunnel.example]
+accept = "localhost:5432"
+connect = "tcp://quotaguard.com:5432"
+transparent = false
