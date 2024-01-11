@@ -1,5 +1,5 @@
 var url = require('url');
-var HttpsProxyAgent = require('https-proxy-agent');
+var HttpsProxyAgent = require('https-proxy-agent').HttpsProxyAgent;
 var request = require('request');
 
 var testEndpoint = 'https://ip.quotaguard.com';
