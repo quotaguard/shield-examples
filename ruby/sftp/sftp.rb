@@ -6,7 +6,7 @@ Net::SFTP.start('test.rebex.net', 'demo', password: 'password', port: 2222) do |
   sftp.download!('readme.txt', 'readme.txt')
 end
 
-if File.exists?('readme.txt')
+if File.exist?('readme.txt')
   puts "Downloaded 'readme.txt' successfully"
   puts "   CONTENTS"
   puts "--------------"
