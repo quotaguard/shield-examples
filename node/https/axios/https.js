@@ -1,21 +1,15 @@
 const axios = require('axios');
-const url = require('url');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 
-const proxy = url.parse(process.env.QUOTAGUARDSHIELD_URL);
-const auth = proxy.auth.split(':');
+const proxyUrl = process.env.QUOTAGUARDSHIELD_URL;
 
 const fetchIp = async () => {
     try {
+        // Create an HTTPS agent that tunnels through the proxy
+        const httpsAgent = new HttpsProxyAgent(proxyUrl);
+
         const axiosInstance = axios.create({
-            proxy: {
-                protocol: 'https',
-                host: proxy.hostname,
-                port: proxy.port,
-                auth: {
-                    username: auth[0],
-                    password: auth[1]
-                }
-            }
+            httpsAgent
         });
 
         const res = await axiosInstance.get('https://ip.quotaguard.com');
