@@ -16,5 +16,5 @@ RUN curl -sSL https://s3.amazonaws.com/quotaguard/qgpass-latest.tar.gz \
 # Compile Java class
 RUN javac HttpsTest.java
 
-# Default command: run Java app behind QGPass
+# Run Java app behind QGPass
 CMD ["bin/qgpass", "java", "HttpsTest"]
