@@ -3,12 +3,13 @@ Java HTTPS for QuotaGuard Shield Example
 
 # Prerequesites
 ```
-
+curl -sSL https://s3.amazonaws.com/quotaguard/qgpass-latest.tar.gz
 ```
 
 # Run example
 ```
-QUOTAGUARDSHIELD_URL=... 
+javac HttpsTest.java
+QUOTAGUARDSHIELD_URL=... bin/qgpass java HttpsTest
 ```
 
 Be sure to set QUOTAGUARDSHIELD_URL to your HTTPS proxy URL from the [QuotaGuard Dashboard](https://www.quotaguard.com/setup/outbound).
