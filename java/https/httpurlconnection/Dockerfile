@@ -1,8 +1,8 @@
-# Start from a standard Debian-based image
-FROM openjdk:17-slim
+# Start from a standard Java image
+FROM eclipse-temurin:17-alpine
 
-# Install curl just in case
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Install curl
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
