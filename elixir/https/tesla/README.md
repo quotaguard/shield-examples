@@ -1,13 +1,13 @@
 Elixir Tesla HTTPS QuotaGuard Shield Example
 --
 
-# Prerequesites
+# Prerequisites
 * mix
 * QGPass
 
 # Run example
 ```
-QUOTAGUARDSTATIC_URL=... ./bin/qgpass mix run -e "Qg.request_ip()"
+QUOTAGUARDSHIELD_URL=... ./bin/qgpass mix run -e "Qg.request_ip()"
 ```
 
 Be sure to set QUOTAGUARDSHIELD_URL to your HTTPS proxy URL from the [QuotaGuard Dashboard](https://www.quotaguard.com/setup/outbound).
