@@ -6,7 +6,7 @@ This only requires curl, which generally is installed alongside php.
 
 # Run example
 ```
-QUOTAGUARDSTATIC_URL=... php https.php
+QUOTAGUARDSHIELD_URL=... php https.php
 ```
 
 Be sure to set QUOTAGUARDSHIELD_URL to your HTTP proxy URL from the [QuotaGuard Dashboard](https://www.quotaguard.com/setup/outbound).
