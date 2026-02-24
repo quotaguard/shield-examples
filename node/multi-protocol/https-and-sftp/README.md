@@ -1,7 +1,7 @@
 NodeJS HTTPS and SFTP using both QGTunnel and QGPass for QuotaGuard Shield Example
 --
 
-# Prerequesites
+# Prerequisites
 ```
 npm install https-proxy-agent request ssh2-sftp-client socks
 curl https://s3.amazonaws.com/quotaguard/qgtunnel-latest.tar.gz | tar xz
