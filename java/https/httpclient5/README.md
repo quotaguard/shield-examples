@@ -1,20 +1,20 @@
-# Java HTTPS with HttpURLConnection + QuotaGuard Shield
+# Java HTTPS with Apache HttpClient 5 + QuotaGuard Shield
 
-A minimal example showing how to send HTTPS requests through QuotaGuard Shield from Java using the built-in [`HttpURLConnection`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/HttpURLConnection.html).
+A minimal example showing how to send HTTPS requests through QuotaGuard Shield from Java using [Apache HttpClient 5](https://hc.apache.org/httpcomponents-client-5.3.x/).
 
 ## Prerequisites
 
 - An active QuotaGuard Shield subscription. You'll need your `QUOTAGUARDSHIELD_URL` from the [dashboard](https://www.quotaguard.com/setup/outbound) — it looks like `https://username:password@us-east-shield-XX.quotaguard.com:9294`.
 - Docker (the example runs in a container so you don't have to install Java locally).
-- Java HTTP clients (HttpURLConnection, OkHttp, Apache HttpClient, etc.) cannot dial the Shield proxy directly — see [How it works](#how-it-works) below. This example uses **QGPass**, a small helper we ship that bridges the gap.
+- Java HTTP clients (HttpClient 5, OkHttp, HttpURLConnection, etc.) cannot dial the Shield proxy directly — see [How it works](#how-it-works) below. This example uses **QGPass**, a small helper we ship that bridges the gap.
 
 ## Build and run
 
 ```bash
-docker build -t qg-shield-httpurlconnection-example .
+docker build -t qg-shield-httpclient5-example .
 docker run --rm \
   -e QUOTAGUARDSHIELD_URL='https://username:password@us-east-shield-XX.quotaguard.com:9294' \
-  qg-shield-httpurlconnection-example
+  qg-shield-httpclient5-example
 ```
 
 Expected output:
@@ -28,7 +28,7 @@ The example calls `https://ip.quotaguard.com`, which echoes the egress IP of the
 
 ## How it works
 
-QuotaGuard Shield's outbound HTTPS proxy listens on port 9294 with **TLS wrapping the proxy connection itself**. That is, the connection from your application to the proxy is encrypted, and the credentials are transmitted inside that TLS tunnel. Standard Java HTTP clients (HttpURLConnection included) do not natively dial a proxy over TLS — they expect to open a plain TCP connection to the proxy and then optionally `CONNECT` to an HTTPS destination.
+QuotaGuard Shield's outbound HTTPS proxy listens on port 9294 with **TLS wrapping the proxy connection itself**. That is, the connection from your application to the proxy is encrypted, and the credentials are transmitted inside that TLS tunnel. Standard Java HTTP clients (HttpClient 5 included) do not natively dial a proxy over TLS — they expect to open a plain TCP connection to the proxy and then optionally `CONNECT` to an HTTPS destination.
 
 To bridge that, we ship **QGPass**. QGPass runs alongside your Java process, listens on `http://localhost:8080`, reads `QUOTAGUARDSHIELD_URL` from the environment, and handles the TLS hop plus Basic auth. Your Java code only needs to know about `localhost:8080` as a plain HTTP proxy — no credentials in the source, no TLS configuration.
 
@@ -44,22 +44,35 @@ For HTTPS destinations, your client sends a `CONNECT host:443` to QGPass, which 
 
 ## The code
 
-See [HttpsTest.java](HttpsTest.java). The HttpURLConnection-specific configuration uses Java system properties:
+See [HttpsTest.java](HttpsTest.java). The HttpClient 5-specific configuration is one line:
 
 ```java
-System.setProperty("https.proxyHost", "localhost");
-System.setProperty("https.proxyPort", "8080");
+HttpHost proxy = new HttpHost("http", "localhost", 8080);
+
+CloseableHttpClient client = HttpClients.custom()
+        .setProxy(proxy)
+        .build();
 ```
 
-That's the whole integration. These properties apply to every HTTPS connection in the JVM, so you don't have to configure each `HttpURLConnection` instance individually.
+That's the whole integration. The `HttpHost` scheme is `"http"` (the local hop to QGPass is plain HTTP) and it points at `localhost:8080`.
+
+### Gradle dependency
+
+```groovy
+dependencies {
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+}
+```
+
+No QuotaGuard-specific library is needed — QGPass runs as a separate process, not a Java dependency.
 
 ## Troubleshooting
 
 - **Connection timeout / hang** — most often this means QGPass isn't running. Confirm your `CMD` launches the JVM via `bin/qgpass`, not bare `java`.
-- **`407 Proxy Authentication Required`** — usually means you're pointing the JVM directly at the `*.quotaguard.com:9294` URL instead of at QGPass. Java HTTP clients can't authenticate to the Shield proxy directly; let QGPass handle it.
+- **`407 Proxy Authentication Required`** — usually means you're pointing HttpClient directly at the `*.quotaguard.com:9294` URL instead of at QGPass. Java HTTP clients can't authenticate to the Shield proxy directly; let QGPass handle it.
 - **Anything else** — non-`407` HTTP status codes come from your destination server, not from QuotaGuard.
 
 ## See also
 
+- [HttpURLConnection example](../httpurlconnection/) — same idea using Java's built-in client
 - [OkHttp example](../okhttp/) — same idea using OkHttp
-- [HttpClient 5 example](../httpclient5/) — same idea using Apache HttpClient 5
