@@ -1,4 +1,4 @@
-NodeJS SDK (axios and ws) through QuotaGuard Shield Example
+NodeJS Hyperliquid SDK (axios and ws) through QuotaGuard Shield Example
 --
 
 This example shows how to route a third-party Node.js SDK built on axios and ws through a QuotaGuard Shield proxy, using [@siebly/hyperliquid-api](https://www.npmjs.com/package/@siebly/hyperliquid-api) as the concrete case. It makes an unsigned `/info` request over REST, subscribes to the `allMids` WebSocket stream, and prints the egress IP so you can confirm the static IP is in use. No wallet key is needed to run it.
